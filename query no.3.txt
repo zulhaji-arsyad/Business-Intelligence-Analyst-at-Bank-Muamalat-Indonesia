@@ -1,0 +1,45 @@
+----alter table products alter column Price type numeric using Price::numeric;
+
+
+--- soal no 3 
+---- joining table between  orders and customers
+
+select 
+	o."OrderID",
+	o."Date",
+	o."CustomerID",
+	cus."CustomerCity",
+	cus."CustomerState",
+	cus."CustomerZip"
+	
+from orders as o
+left join customers as cus on cus."CustomerID" = o."CustomerID";
+
+
+
+----join all table with join 
+
+create table master as(
+select 
+o."OrderID",
+concat(date_part('month', o."Date"), '/', date_part('year', o."Date")) as month_year_ordering,
+cus."CustomerID", 
+cus."CustomerCity",
+cus."CustomerState",
+pr."ProdName",
+pc."CategoryName",
+pr."Price",
+o."Quantity",
+pr."Price" * o."Quantity" as total
+from customers as cus
+join orders as o on cus."CustomerID" = o."CustomerID"
+join products as pr on pr."ProdNumber" = o."ProdNumber"
+join product_category as pc on pc."CategoryID" = pr."Category"
+);
+
+---- master table
+select * from master;
+
+--- export data master to csv
+copy (select *
+	  from master ) to C:/Users/ASUS/Documents/zulhaji/Virtual Internship Experience Bank Muamalat/master.csv' DELIMITER ',' CSV HEADER;
